@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Sao Chiếu Mệnh</title>
+    <style>
+        /* CSS reset cơ bản */
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Giao diện nền */
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Khung nội dung chính (Card) */
+        .container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 400px; /* Phù hợp với kích thước điện thoại */
+            padding: 25px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        /* Nhóm form nhập liệu */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a4a4a;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px; /* Cỡ chữ 16px giúp iPhone không bị tự động zoom */
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus, select:focus {
+            border-color: #d32f2f;
+        }
+
+        /* Nút bấm chuẩn mobile */
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* Vùng hiển thị kết quả */
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ffebee;
+            border-radius: 8px;
+            text-align: center;
+            display: none; /* Ẩn đi khi chưa có kết quả */
+        }
+
+        .result-box p {
+            color: #333;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .star-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d32f2f;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Tra Sao Chiếu Mệnh</h2>
+        
+        <div class="form-group">
+            <label for="namSinh">Năm sinh (Âm lịch):</label>
+            <input type="number" id="namSinh" placeholder="Ví dụ: 2003" pattern="[0-9]*" inputmode="numeric">
+        </div>
+
+        <div class="form-group">
+            <label for="gioiTinh">Giới tính:</label>
+            <select id="gioiTinh">
+                <option value="nam">Nam</option>
+                <option value="nu">Nữ</option>
+            </select>
+        </div>
+
+        <button onclick="traCuuSao()">Xem Kết Quả</button>
+
+        <div id="ketQua" class="result-box">
+            <p id="tuoiAmText"></p>
+            <div id="tenSao" class="star-name"></div>
+        </div>
+    </div>
+
+    <script>
+        function traCuuSao() {
+            const namSinh = document.getElementById('namSinh').value;
+            const gioiTinh = document.getElementById('gioiTinh').value;
+            const ketQuaDiv = document.getElementById('ketQua');
+            const tuoiAmText = document.getElementById('tuoiAmText');
+            const tenSaoText = document.getElementById('tenSao');
+
+            if (!namSinh || namSinh < 1900) {
+                alert('Vui lòng nhập năm sinh hợp lệ!');
+                return;
+            }
+
+            // Lấy năm hiện tại
+            const namHienTai = new Date().getFullYear();
+            
+            // Tính tuổi âm (Tuổi mụ = Năm hiện tại - Năm sinh + 1)
+            const tuoiAm = namHienTai - parseInt(namSinh) + 1;
+
+            if (tuoiAm <= 0) {
+                alert('Năm sinh lớn hơn năm hiện tại. Vui lòng kiểm tra lại!');
+                return;
+            }
+
+            // Tính số dư để tra cứu hệ thống Cửu Diệu (9 sao)
+            const soDu = tuoiAm % 9;
+
+            // Bảng sao Nam mạng
+            const saoNam = {
+                1: 'La Hầu', 2: 'Thổ Tú', 3: 'Thủy Diệu', 4: 'Thái Bạch',
+                5: 'Thái Dương', 6: 'Vân Hớn', 7: 'Kế Đô', 8: 'Thái Âm', 0: 'Mộc Đức'
+            };
+
+            // Bảng sao Nữ mạng
+            const saoNu = {
+                1: 'Kế Đô', 2: 'Vân Hớn', 3: 'Mộc Đức', 4: 'Thái Âm',
+                5: 'Thổ Tú', 6: 'La Hầu', 7: 'Thái Dương', 8: 'Thái Bạch', 0: 'Thủy Diệu'
+            };
+
+            // Xác định sao dựa vào giới tính
+            const saoChieuMenh = (gioiTinh === 'nam') ? saoNam[soDu] : saoNu[soDu];
+
+            // Hiển thị kết quả
+            tuoiAmText.innerHTML = `Năm nay bạn <b>${tuoiAm}</b> tuổi (Âm lịch)`;
+            tenSaoText.innerText = saoChieuMenh;
+            ketQuaDiv.style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
